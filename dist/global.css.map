@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/global.css"],
+  "sourcesContent": [".nav_component.inverse {\n  color: var(--link-color--link-alternate);\n}\n\n.nav_component.inverse .logo_image #logo-colored {\n  fill: var(--_base--brand-extended--cobalt-300);\n}\n\n.nav_component.inverse .nav_menu-link:hover,\n.nav_component.inverse .nav_dropdown-link:hover {\n  color: var(--_base--brand-extended--cobalt-200);\n}\n\n.nav_component.inverse .button {\n  background-color: var(--_base--brand-extended--cobalt-400);\n}\n\n.nav_component.inverse .button.is-tertiary {\n  background-color: transparent;\n}\n"],
+  "mappings": ";AAAA,CAAC,aAAa,CAAC;AACb,SAAO,IAAI;AACb;AAEA,CAJC,aAIa,CAJC,QAIQ,CAAC,WAAW,CAAC;AAClC,QAAM,IAAI;AACZ;AAEA,CARC,aAQa,CARC,QAQQ,CAAC,aAAa;AACrC,CATC,aASa,CATC,QASQ,CAAC,iBAAiB;AACvC,SAAO,IAAI;AACb;AAEA,CAbC,aAaa,CAbC,QAaQ,CAAC;AACtB,oBAAkB,IAAI;AACxB;AAEA,CAjBC,aAiBa,CAjBC,QAiBQ,CAJC,MAIM,CAAC;AAC7B,oBAAkB;AACpB;",
+  "names": []
+}
