@@ -1,59 +1,136 @@
 window.Webflow ||= [];
 window.Webflow.push(() => {
+  let departments = [];
+  let locations = [];
 
-// Fetch job data from the API
-fetch('https://api.rippling.com/platform/api/ats/v1/board/surepath-ai/jobs')
-  .then(response => response.json())
-  .then(jobs => {
-    // Get unique departments
-    const departments = [...new Set(jobs.map(job => job.department.label))];
+  const jobLength = document.querySelectorAll('[fs-cmsfilter-element="list"] .w-dyn-item').length;
 
-    // Get the job_component element
-    const jobComponent = document.querySelector('.job_component');
+  document.querySelector('[fs-element="string"]').innerHTML = `${jobLength} role${
+    jobLength > 1 || jobLength === 0 ? 's' : ''
+  } across <strong> all departments </strong> and <strong> all locations</strong>.`;
 
-    // For each department
-    departments.forEach(department => {
-      // Clone the department-wrap element
-      const departmentWrap = document.querySelector('[fs-element="department-wrap"]').cloneNode(true);
+  document.querySelectorAll('[fs-cmsfilter-element="list"] .w-dyn-item').forEach((job) => {
+    const locationElement = job.querySelector('[fs-cmsfilter-field="location"]');
+    if (locationElement) {
+      const locationName = locationElement.textContent.trim();
 
-     // Set the department name for all matching elements
-    departmentWrap.querySelectorAll('[fs-element="department"]').forEach(element => {
-    element.textContent = department;
-    });
+      if (!locations.includes(locationName)) {
+        locations.push(locationName);
 
-      // Get jobs for this department
-      const departmentJobs = jobs.filter(job => job.department.label === department);
+        const select = document.querySelector('select[fs-cmsfilter-field="location"]');
+        let opt = document.createElement('option');
+        opt.value = locationName;
+        opt.innerHTML = locationName;
+        select.appendChild(opt);
+      }
+    }
 
-      // Remove the original job element (we'll replace it with new ones)
-      departmentWrap.querySelector('[fs-element="job"]').remove();
+    const departmentElement = job.querySelector('[fs-cmsfilter-field="department"]');
+    if (departmentElement) {
+      const departmentName = departmentElement.textContent.trim();
 
-      // For each job in this department
-      departmentJobs.forEach(job => {
-        // Clone the job element
-        const jobElement = document.querySelector('[fs-element="job"]').cloneNode(true);
+      if (!departments.includes(departmentName)) {
+        departments.push(departmentName);
 
-        // Set job title and link
-        const jobLink = jobElement.querySelector('[fs-element="job-link"]');
-        jobLink.href = job.url;
+        const select = document.querySelector('select[fs-cmsfilter-field="department"]');
+        let opt = document.createElement('option');
+        opt.value = departmentName;
+        opt.innerHTML = departmentName;
+        select.appendChild(opt);
 
-        const jobTitle = jobElement.querySelector('[fs-element="job-title"]');
-        jobTitle.textContent = job.name;
-        jobTitle.href = job.url;
+        // Clone the department wrap element
+        const departmentWrapTemplate = document.querySelector('[fs-element="department-wrap"]');
+        if (departmentWrapTemplate) {
+          const newDepartmentWrap = departmentWrapTemplate.cloneNode(true);
 
-        // Set location
-        jobElement.querySelector('[fs-element="location"]').textContent = job.workLocation.label;
+          // Update the department name in the cloned element
+          const departmentNameElement = newDepartmentWrap.querySelector(
+            '[fs-cmsfilter-field="department"]'
+          );
+          if (departmentNameElement) {
+            departmentNameElement.textContent = departmentName;
+          }
 
-        // Append the job element to the department wrap
-        departmentWrap.appendChild(jobElement);
+          const jobNameElement = newDepartmentWrap.querySelector('[fs-cmsfilter-field="title"]');
+
+          const locationNameElement = newDepartmentWrap.querySelector(
+            '[fs-cmsfilter-field="location"]'
+          );
+
+          document
+            .querySelectorAll('[fs-cmsfilter-element="list"] .w-dyn-item')
+            .forEach((innerJob) => {
+              const innerDepartment = innerJob.querySelector(
+                '[fs-cmsfilter-field="department"]'
+              ).textContent;
+              const innerLocation = innerJob.querySelector(
+                '[fs-cmsfilter-field="location"]'
+              ).textContent;
+              const innertitle = innerJob.querySelector('[fs-cmsfilter-field="title"]').textContent;
+
+              if (innerDepartment === departmentName) {
+                const newEl = locationNameElement.cloneNode(true, true);
+                newEl.textContent = innerLocation;
+                locationNameElement.append(newEl);
+
+                jobNameElement.innerHTML = `${jobNameElement.innerHTML} ${innertitle}`;
+              }
+            });
+
+          // Prepend the new department wrap before the job element
+          job.parentNode.insertBefore(newDepartmentWrap, job);
+        }
+      }
+    }
+  });
+
+  window.fsAttributes = window.fsAttributes || [];
+  window.fsAttributes.push([
+    'cmsfilter',
+    (filterInstances) => {
+      // The callback passes a `filterInstances` array with all the `CMSFilters` instances on the page.
+      const [filterInstance] = filterInstances;
+
+      // The `renderitems` event runs whenever the list renders items after filtering.
+      filterInstance.listInstance.on('renderitems', (renderedItems) => {
+        console.log(renderedItems);
+        const filterItems = renderedItems.filter((item) =>
+          item.element.classList.contains('w-dyn-item')
+        );
+
+        const count = filterItems.length;
+        const uniqueLocations = new Set();
+        const uniqueDepartments = new Set();
+
+        filterItems.forEach((item) => {
+          if (item.props && item.props.location && item.props.location.values) {
+            item.props.location.values.forEach((location) => uniqueLocations.add(location));
+          }
+          if (item.props && item.props.department && item.props.department.values) {
+            item.props.department.values.forEach((department) => uniqueDepartments.add(department));
+          }
+        });
+
+        const locationCount = uniqueLocations.size;
+        const departmentCount = uniqueDepartments.size;
+
+        console.log(count, locationCount, departmentCount);
+
+        const textString = `${count} role${count > 1 || count === 0 ? 's' : ''} across <strong>${
+          departmentCount === departments.length ? 'all' : departmentCount
+        } department${
+          departmentCount > 1 || departmentCount === 0 ? 's' : ''
+        } </strong> and <strong>${
+          locationCount === locations.length ? 'all' : locationCount
+        } location${locationCount > 1 || locationCount === 0 ? 's' : ''}</strong>.`;
+
+        document.querySelector('[fs-element="string"]').innerHTML = textString;
+        console.log(textString);
       });
+    },
+  ]);
 
-      // Append the department wrap to the job component
-      jobComponent.appendChild(departmentWrap);
-    });
-
-    // Remove the original department-wrap element
-    document.querySelector('[fs-element="department-wrap"]').remove();
-  })
-.catch(error => console.error('Error fetching jobs:', error));
-
-})
+  document.querySelector('[fs-cmsfilter-element="empty"] a').addEventListener('click', () => {
+    document.querySelector('[fs-cmsfilter-element="clear"]').click();
+  });
+});
