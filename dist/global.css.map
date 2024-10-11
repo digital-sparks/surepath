@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": ["../src/global.css"],
-  "sourcesContent": [".nav_component.inverse {\n  color: var(--link-color--link-alternate);\n}\n\n.nav_component.inverse .logo_image #logo-colored {\n  fill: var(--_base--brand-extended--cobalt-300);\n}\n\n.nav_component.inverse .nav_menu-link:hover,\n.nav_component.inverse .nav_dropdown-link:hover {\n  color: var(--_base--brand-extended--cobalt-200);\n}\n\n.nav_component.inverse .button {\n  background-color: var(--_base--brand-extended--cobalt-400);\n}\n\n.nav_component.inverse .button.is-tertiary {\n  background-color: transparent;\n}\n"],
-  "mappings": ";AAAA,CAAC,aAAa,CAAC;AACb,SAAO,IAAI;AACb;AAEA,CAJC,aAIa,CAJC,QAIQ,CAAC,WAAW,CAAC;AAClC,QAAM,IAAI;AACZ;AAEA,CARC,aAQa,CARC,QAQQ,CAAC,aAAa;AACrC,CATC,aASa,CATC,QASQ,CAAC,iBAAiB;AACvC,SAAO,IAAI;AACb;AAEA,CAbC,aAaa,CAbC,QAaQ,CAAC;AACtB,oBAAkB,IAAI;AACxB;AAEA,CAjBC,aAiBa,CAjBC,QAiBQ,CAJC,MAIM,CAAC;AAC7B,oBAAkB;AACpB;",
+  "sourcesContent": [".heading-span {\n  background-color: white;\n  background-clip: text;\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n}\n\n.marker-effect {\n  position: absolute;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: -1;\n  background-color: var(--primitive--brand--aqua);\n  width: 0%;\n  border-radius: 0.25rem;\n}\n"],
+  "mappings": ";AAAA,CAAC;AACC,oBAAkB;AAClB,mBAAiB;AACjB,2BAAyB;AACzB,2BAAyB;AAC3B;AAEA,CAAC;AACC,YAAU;AACV,OAAK;AACL,QAAM;AACN,UAAQ;AACR,SAAO;AACP,WAAS;AACT,oBAAkB,IAAI;AACtB,SAAO;AACP,iBAAe;AACjB;",
   "names": []
 }

@@ -14,6 +14,7 @@ const ENTRY_POINTS = [
   'src/solutions.js',
   'src/hubspot.css',
   'src/careers.js',
+  'src/about.js',
   'src/global.js',
   'src/global.css',
 ];

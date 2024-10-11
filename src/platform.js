@@ -13,14 +13,14 @@ window.Webflow.push(() => {
     const images = stickyWrap.querySelectorAll('.sticky-col_image-wrap');
 
     rows.forEach((row, index) => {
-      if (index === rows.length) return; // Skip the last row
+      if (index === 0) return; // Skip the first row
 
       ScrollTrigger.create({
         trigger: row.querySelector('.sticky-col_row-wrap'),
         // markers: true,
-        start: 'bottom 80px',
-        onEnter: () => gsap.to(images[index + 1], { opacity: 1, duration: 0.2 }),
-        onLeaveBack: () => gsap.to(images[index + 1], { opacity: 0, duration: 0.2 }),
+        start: 'top 55%',
+        onEnter: () => gsap.to(images[index], { opacity: 1, duration: 0.2 }),
+        onLeaveBack: () => gsap.to(images[index], { opacity: 0, duration: 0.2 }),
       });
     });
   });

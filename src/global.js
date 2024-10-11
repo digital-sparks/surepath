@@ -1,59 +1,203 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-gsap.registerPlugin(ScrollTrigger);
+import { SplitText } from 'gsap/SplitText';
+gsap.registerPlugin(SplitText, ScrollTrigger);
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
+  const testimonialComponents = document.querySelectorAll('.testimonial_component blockquote');
+
+  testimonialComponents.forEach((quote, index) => {
+    let headingSpans;
+    let masterTimeline;
+
+    const applyHighlighter = () => {
+      headingSpans = quote.querySelectorAll('.heading-span');
+      const lines = gsap.utils.toArray(headingSpans);
+
+      gsap.defaults({ ease: 'power2.out', duration: 1.2 });
+
+      // Prepare highlight elements without setting initial styles
+      const lineProperties = lines.map((line) => ({
+        element: line,
+        highlight: document.createElement('span'),
+      }));
+
+      // Append highlight elements without setting initial styles
+      requestAnimationFrame(() => {
+        lineProperties.forEach(({ element, highlight }) => {
+          highlight.className = 'marker-effect';
+          element.appendChild(highlight);
+        });
+      });
+
+      // Create master timeline
+      masterTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: quote,
+          start: 'bottom bottom',
+          end: 'bottom 40%',
+          // markers: true,
+        },
+      });
+
+      // Create a sequence of animations
+      lines.forEach((line, i) => {
+        masterTimeline.add(
+          gsap
+            .timeline()
+            .set(
+              line,
+              {
+                '-webkit-background-clip': 'text',
+                background:
+                  'linear-gradient(to right, var(--semantic--text--text-primary) 0%, var(--semantic--text--text-alternate) 0%)',
+              },
+              '>'
+            ) // Set initial state at the start of this timeline
+            .to(line, {
+              backgroundImage:
+                'linear-gradient(to right, var(--semantic--text--text-primary) 100%, var(--semantic--text--text-alternate) 100%)',
+            })
+            .to(
+              lineProperties[i].highlight,
+              {
+                width: '100%',
+              },
+              '<'
+            )
+        );
+      });
+    };
+
+    let text = nestedLinesSplit(quote, {
+      type: 'lines',
+      reduceWhiteSpace: true,
+      lineThreshold: 1,
+    });
+
+    applyHighlighter();
+
+    let previousWidth = window.innerWidth;
+    const debounceDelay = 250;
+
+    const debounce = (func, delay) => {
+      let timeoutId;
+      return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+      };
+    };
+
+    const handleResize = () => {
+      const currentWidth = window.innerWidth;
+      if (currentWidth !== previousWidth) {
+        text.revert();
+        text = nestedLinesSplit(quote, {
+          type: 'lines',
+          reduceWhiteSpace: true,
+          lineThreshold: 1,
+        });
+        gsap.set(quote.querySelectorAll('.heading-span'), {
+          backgroundColor: 'white',
+        });
+        quote.querySelectorAll('.marker-effect').forEach((marker) => marker.remove());
+
+        previousWidth = currentWidth;
+      }
+    };
+
+    const applyHighlighterDebounced = debounce(applyHighlighter, debounceDelay);
+
+    const handleResizeAndApply = () => {
+      handleResize();
+      applyHighlighterDebounced();
+    };
+
+    window.addEventListener('resize', handleResizeAndApply);
+  });
+
+  function nestedLinesSplit(target, vars) {
+    target = gsap.utils.toArray(target);
+    if (target.length > 1) {
+      let splits = target.map((t) => nestedLinesSplit(t, vars)),
+        result = splits[0],
+        resultRevert = result.revert;
+      result.lines = splits.reduce((acc, cur) => acc.concat(cur.lines), []);
+      result.revert = () => splits.forEach((s) => (s === result ? resultRevert() : s.revert()));
+      return result;
+    }
+    target = target[0];
+    let contents = target.innerHTML;
+    gsap.utils.toArray(target.children).forEach((child) => {
+      let split = new SplitText(child, { type: 'lines' });
+      split.lines.forEach((line) => {
+        let clone = child.cloneNode(false);
+        clone.innerHTML = line.innerHTML;
+        target.insertBefore(clone, child);
+      });
+      target.removeChild(child);
+    });
+    let split = new SplitText(target, vars),
+      originalRevert = split.revert;
+    split.revert = () => {
+      originalRevert.call(split);
+      target.innerHTML = contents;
+    };
+    return split;
+  }
+
+  /////
+
+  /////
+
+  /////
+
+  /////
+
+  document.querySelectorAll('.logo-marquee_image').forEach((logo) => {
+    logo.setAttribute('width', logo.dataset.width);
+    logo.setAttribute('height', logo.dataset.height);
+  });
+
+  /////
+  /////
+
   const nav = document.querySelector('.nav_component');
-  const navBackground = document.querySelector('.nav_background');
+  const isDarkModeNav = nav.getAttribute('nav-state') === 'inverse';
   const animationDuration = 0.2;
-  let navIsInversed = true;
-  let navState = nav.getAttribute('nav-state') === 'inverse';
-  console.log(navState);
 
   gsap.set(nav, { backgroundColor: 'rgba(255,255,255,0)' });
-  gsap.set(navBackground, { opacity: 0 });
 
-  if (navState) nav.classList.add('inverse');
+  if (isDarkModeNav) {
+    nav.classList.add('inverse');
+    nav.removeAttribute('nav-state');
+  }
 
   ScrollTrigger.create({
     start: '25 top',
     end: '+=1',
     toggleActions: 'play none none reverse',
-    onEnter: () => {
-      gsap.to(nav, { backgroundColor: 'rgba(255, 255, 255, 1)', duration: animationDuration });
-      if (navState) {
-        navIsInversed = false;
-        nav.classList.remove('inverse');
-      }
-    },
-    onLeaveBack: () => {
-      gsap.to(nav, { backgroundColor: 'rgba(255, 255, 255, 0)', duration: animationDuration });
-      if (navState) {
-        navIsInversed = true;
-        nav.classList.add('inverse');
-      }
-    },
+    onEnter: () => updateNavStyle(true),
+    onLeaveBack: () => updateNavStyle(false),
   });
 
-  document.querySelectorAll('.nav_dropdown').forEach((dropdown) => {
-    dropdown.addEventListener('mouseenter', () => {
-      gsap.to(navBackground, { opacity: navState ? 0.3 : 0, duration: animationDuration });
-    });
-    dropdown.addEventListener('mouseleave', () => {
-      gsap.to(navBackground, { opacity: 0, duration: animationDuration });
-    });
-  });
+  function updateNavStyle(isEntering) {
+    const backgroundColor = isEntering ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0)';
+    gsap.to(nav, { backgroundColor, duration: animationDuration });
 
-  if (navState) {
-    document.querySelector('.nav_menu-open').addEventListener('click', () => {
-      if (navIsInversed) nav.classList.remove('inverse');
-    });
+    if (isDarkModeNav) {
+      nav.classList.toggle('inverse', !isEntering);
+    }
+  }
 
-    document.querySelector('.nav_menu-close').addEventListener('click', () => {
-      setTimeout(() => {
-        if (navIsInversed) nav.classList.add('inverse');
-      }, 350);
+  if (isDarkModeNav) {
+    const menuOpen = document.querySelector('.nav_menu-open');
+    const menuClose = document.querySelector('.nav_menu-close');
+
+    menuOpen.addEventListener('click', () => nav.classList.remove('inverse'));
+    menuClose.addEventListener('click', () => {
+      setTimeout(() => nav.classList.add('inverse'), 500);
     });
   }
 });

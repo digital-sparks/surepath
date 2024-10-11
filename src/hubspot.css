@@ -56,7 +56,7 @@
 }
 
 .legal-consent-container .hs-error-msgs label {
-  color: var(--text-color--text-error) !important;
+  color: var(--semantic--text--text-error) !important;
 }
 
 .legal-consent-container {
@@ -75,35 +75,35 @@
   margin-top: 0.25rem !important;
   margin-right: 0.5rem !important;
   min-height: auto !important;
-  border: 1px solid var(--border-color--border-secondary) !important;
+  border: 1px solid var(--semantic--border--border-secondary) !important;
   border-radius: 0.25rem !important;
-  accent-color: var(--border-color--border-secondary) !important;
+  accent-color: var(--semantic--border--border-secondary) !important;
   transition:
     background-color 100ms ease,
     border-color 100ms ease;
 }
 
 .hs-input[type='checkbox']:pressed {
-  border-color: var(--border-color--border-secondary) !important;
-  accent-color: var(--border-color--border-secondary) !important;
+  border-color: var(--semantic--border--border-secondary) !important;
+  accent-color: var(--semantic--border--border-secondary) !important;
   box-shadow: none;
 }
 
 .hs-input[type='checkbox']:focus {
-  border-color: var(--border-color--border-secondary) !important;
-  accent-color: var(--border-color--border-secondary) !important;
+  border-color: var(--semantic--border--border-secondary) !important;
+  accent-color: var(--semantic--border--border-secondary) !important;
 }
 
 .hs-input[type='checkbox']:hover {
-  border-color: var(--border-color--border-secondary) !important;
-  accent-color: var(--border-color--border-secondary) !important;
+  border-color: var(--semantic--border--border-secondary) !important;
+  accent-color: var(--semantic--border--border-secondary) !important;
   cursor: pointer !important;
 }
 
 .hs-input[type='checkbox']:checked {
-  border-color: var(--_base--brand--cobalt) !important;
-  accent-color: var(--_base--brand--cobalt) !important;
-  background-color: var(--_base--brand--cobalt) !important;
+  border-color: var(--primitive--brand--cobalt) !important;
+  accent-color: var(--primitive--brand--cobalt) !important;
+  background-color: var(--primitive--brand--cobalt) !important;
 }
 
 .hs-input[type='checkbox']:checked::after {
@@ -124,12 +124,13 @@
 }
 
 .hs-form-booleancheckbox-display p {
-  color: var(--text-color--text-secondary) !important;
+  color: var(--semantic--text-secondary) !important;
+
   font-size: 0.875rem;
 }
 
 .hs-form-booleancheckbox-display a {
-  color: var(--link-color--link-secondary) !important;
+  color: var(--semantic--link--link-secondary) !important;
   text-decoration: underline;
   transition: color 150ms ease;
 }

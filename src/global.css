@@ -1,20 +1,18 @@
-.nav_component.inverse {
-  color: var(--link-color--link-alternate);
+.heading-span {
+  background-color: white;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.nav_component.inverse .logo_image #logo-colored {
-  fill: var(--_base--brand-extended--cobalt-300);
-}
-
-.nav_component.inverse .nav_menu-link:hover,
-.nav_component.inverse .nav_dropdown-link:hover {
-  color: var(--_base--brand-extended--cobalt-200);
-}
-
-.nav_component.inverse .button {
-  background-color: var(--_base--brand-extended--cobalt-400);
-}
-
-.nav_component.inverse .button.is-tertiary {
-  background-color: transparent;
+.marker-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+  background-color: var(--primitive--brand--aqua);
+  width: 0%;
+  border-radius: 0.25rem;
 }

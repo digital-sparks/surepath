@@ -34,7 +34,7 @@
     "prettier": "^3.1.1"
   },
   "dependencies": {
-    "gsap": "^3.12.5",
-    "swiper": "^11.1.14"
+    "gsap": "file:gsap-bonus.tgz",
+    "swiper": "^8.4.7"
   }
 }

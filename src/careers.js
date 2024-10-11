@@ -1,5 +1,25 @@
+import gsap from 'gsap';
+
 window.Webflow ||= [];
 window.Webflow.push(() => {
+  function animateCareersBgCircles() {
+    const circles = gsap.utils.shuffle(
+      gsap.utils.toArray('.careers-bg_circle:not([style*="display: none"])')
+    );
+
+    circles.forEach((circle) => {
+      gsap.from(circle.querySelectorAll('.careers-bg_line, img'), {
+        opacity: 0.1,
+        duration: 'random(2, 3)',
+        scale: (_, target) => gsap.getProperty(target, 'scale') * 0.9,
+        stagger: { amount: 0.15, from: 'end' },
+        ease: 'power3.out',
+        delay: 'random(0, 0.25)',
+      });
+    });
+  }
+  animateCareersBgCircles();
+
   // Configurable elements and selectors
   const CONFIG = {
     // Selector for the element that displays the job count string
