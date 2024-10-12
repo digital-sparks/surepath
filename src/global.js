@@ -104,14 +104,18 @@ window.Webflow.push(() => {
         quote.querySelectorAll('.marker-effect').forEach((marker) => marker.remove());
 
         previousWidth = currentWidth;
+        return true; // Indicate that the width has changed
       }
+      return false; // Indicate that the width hasn't changed
     };
 
     const applyHighlighterDebounced = debounce(applyHighlighter, debounceDelay);
 
     const handleResizeAndApply = () => {
-      handleResize();
-      applyHighlighterDebounced();
+      const widthChanged = handleResize();
+      if (widthChanged) {
+        applyHighlighterDebounced();
+      }
     };
 
     window.addEventListener('resize', handleResizeAndApply);
