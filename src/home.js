@@ -1,4 +1,4 @@
-import { Swiper, Parallax, Keyboard, Mousewheel } from 'swiper';
+import { Swiper, Parallax, Keyboard, Mousewheel, Autoplay } from 'swiper';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
 
@@ -9,7 +9,7 @@ Webflow.push(function () {
   const slidesLength = document.querySelectorAll('.solution-swiper_item').length;
 
   const solutionsSwiper = new Swiper('.solution-swiper_wrapper', {
-    modules: [Parallax, Keyboard, Mousewheel],
+    modules: [Parallax, Keyboard, Mousewheel, Autoplay],
     wrapperClass: 'solution-swiper_list',
     slideClass: 'solution-swiper_item',
     slidesPerView: 'auto',
@@ -17,16 +17,21 @@ Webflow.push(function () {
     spaceBetween: 24,
     grabCursor: true,
     loop: true,
-    speed: 400,
+    speed: 550,
     parallax: true,
-    initialSlide: slidesLength - 1,
+    // initialSlide: slidesLength - 1,
     keyboard: {
       enabled: true,
       onlyInViewport: true,
     },
+    autoplay: {
+      delay: 3500,
+      pauseOnMouseEnter: true,
+      disableOnInteraction: true,
+    },
     breakpoints: {
       768: {
-        speed: 750,
+        speed: 900,
         spaceBetween: 32,
         mousewheel: {
           enabled: true,
@@ -38,13 +43,20 @@ Webflow.push(function () {
     on: {
       beforeInit: (swiper) => {
         swiper.wrapperEl.style.gridColumnGap = 'unset';
+      },
+      afterInit: (swiper) => {
+        swiper.autoplay.stop();
 
         ScrollTrigger.create({
           trigger: swiper.el,
           start: '75% bottom',
           once: true,
+          // markers: true,
           onEnter: () => {
-            solutionsSwiper.slideNext();
+            setTimeout(() => {
+              swiper.slideNext();
+              swiper.autoplay.start();
+            }, 205);
           },
         });
       },
