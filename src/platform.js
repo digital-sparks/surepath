@@ -4,6 +4,17 @@ gsap.registerPlugin(ScrollTrigger);
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
+  ScrollTrigger.create({
+    trigger: '.sub-nav_component',
+    start: 'top +=96px',
+    onEnter: () => {
+      gsap.to('.sub-nav_shadow', { opacity: 1, duration: 0.2 });
+    },
+    onLeaveBack: () => {
+      gsap.to('.sub-nav_shadow', { opacity: 0, duration: 0.2 });
+    },
+  });
+
   gsap.set('.sticky-col_image-wrap:not(:first-child)', {
     opacity: 0,
   });
@@ -19,8 +30,8 @@ window.Webflow.push(() => {
         trigger: row.querySelector('.sticky-col_row-wrap'),
         // markers: true,
         start: 'top 55%',
-        onEnter: () => gsap.to(images[index], { opacity: 1, duration: 0.2 }),
-        onLeaveBack: () => gsap.to(images[index], { opacity: 0, duration: 0.2 }),
+        onEnter: () => gsap.to(images[index], { opacity: 1, ease: 'none', duration: 0.15 }),
+        onLeaveBack: () => gsap.to(images[index], { opacity: 0, ease: 'none', duration: 0.15 }),
       });
     });
   });

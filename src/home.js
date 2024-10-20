@@ -36,7 +36,7 @@ Webflow.push(function () {
         mousewheel: {
           enabled: true,
           forceToAxis: true,
-          releaseOnEdges: true,
+          thresholdDelta: 5,
         },
       },
     },

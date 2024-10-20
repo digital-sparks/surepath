@@ -17,13 +17,13 @@ Webflow.push(function () {
       onlyInViewport: true,
     },
     breakpoints: {
-      mousewheel: {
-        enabled: true,
-        forceToAxis: true,
-        releaseOnEdges: true,
-      },
       768: {
         spaceBetween: 32,
+        mousewheel: {
+          enabled: true,
+          forceToAxis: true,
+          thresholdDelta: 5,
+        },
       },
     },
     navigation: {
