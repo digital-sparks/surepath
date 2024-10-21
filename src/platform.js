@@ -23,6 +23,10 @@ window.Webflow.push(() => {
     const rows = stickyWrap.querySelectorAll('.sticky-col_row');
     const images = stickyWrap.querySelectorAll('.sticky-col_image-wrap');
 
+    const yOffsetFactor = 2;
+    const durationFactor = 0.45;
+    const easeFactor = 'power1.inOut';
+
     rows.forEach((row, index) => {
       if (index === 0) return; // Skip the first row
 
@@ -30,8 +34,32 @@ window.Webflow.push(() => {
         trigger: row.querySelector('.sticky-col_row-wrap'),
         // markers: true,
         start: 'top 55%',
-        onEnter: () => gsap.to(images[index], { opacity: 1, ease: 'none', duration: 0.15 }),
-        onLeaveBack: () => gsap.to(images[index], { opacity: 0, ease: 'none', duration: 0.15 }),
+        onEnter: () => {
+          gsap.to(images[index - 1], {
+            yPercent: yOffsetFactor,
+            ease: easeFactor,
+            duration: durationFactor * 1.5,
+            opacity: 0,
+          });
+          gsap.fromTo(
+            images[index],
+            { yPercent: yOffsetFactor },
+            { yPercent: 0, opacity: 1, ease: easeFactor, duration: durationFactor }
+          );
+        },
+        onLeaveBack: () => {
+          gsap.to(images[index], {
+            yPercent: yOffsetFactor,
+            ease: easeFactor,
+            duration: durationFactor,
+            opacity: 0,
+          });
+          gsap.fromTo(
+            images[index - 1],
+            { yPercent: yOffsetFactor },
+            { yPercent: 0, opacity: 1, ease: easeFactor, duration: durationFactor * 1.5 }
+          );
+        },
       });
     });
   });
