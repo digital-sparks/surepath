@@ -15,52 +15,71 @@ window.Webflow.push(() => {
     },
   });
 
-  gsap.set('.sticky-col_image-wrap:not(:first-child)', {
-    opacity: 0,
-  });
-
   document.querySelectorAll('.sticky-col_wrap').forEach((stickyWrap) => {
-    const rows = stickyWrap.querySelectorAll('.sticky-col_row');
-    const images = stickyWrap.querySelectorAll('.sticky-col_image-wrap');
+    const rows = Array.from(stickyWrap.querySelectorAll('.sticky-col_row'));
+    const images = Array.from(stickyWrap.querySelectorAll('.sticky-col_image-wrap'));
 
-    const yOffsetFactor = 2;
-    const durationFactor = 0.45;
-    const easeFactor = 'power1.inOut';
+    const animationConfig = {
+      yOffsetFactor: 2,
+      duration: 0.45,
+      ease: 'power1.inOut',
+    };
+
+    let currentAnimation = null;
+    let currentImageIndex = 0;
 
     rows.forEach((row, index) => {
       if (index === 0) return; // Skip the first row
 
       ScrollTrigger.create({
         trigger: row.querySelector('.sticky-col_row-wrap'),
-        // markers: true,
         start: 'top 55%',
-        onEnter: () => {
-          gsap.to(images[index - 1], {
-            yPercent: yOffsetFactor,
-            ease: easeFactor,
-            duration: durationFactor * 1.5,
-            opacity: 0,
-          });
-          gsap.fromTo(
-            images[index],
-            { yPercent: yOffsetFactor },
-            { yPercent: 0, opacity: 1, ease: easeFactor, duration: durationFactor }
-          );
-        },
-        onLeaveBack: () => {
-          gsap.to(images[index], {
-            yPercent: yOffsetFactor,
-            ease: easeFactor,
-            duration: durationFactor,
-            opacity: 0,
-          });
-          gsap.fromTo(
-            images[index - 1],
-            { yPercent: yOffsetFactor },
-            { yPercent: 0, opacity: 1, ease: easeFactor, duration: durationFactor * 1.5 }
-          );
-        },
+        onEnter: () => animateImages(index),
+        onLeaveBack: () => animateImages(index - 1),
       });
     });
+
+    function animateImages(newIndex) {
+      if (currentAnimation) {
+        currentAnimation.kill();
+      }
+
+      const oldIndex = currentImageIndex;
+      currentImageIndex = newIndex;
+
+      const tl = gsap.timeline();
+
+      // Fade out the old image and any other visible images
+      images.forEach((img, idx) => {
+        if (idx !== newIndex) {
+          tl.to(
+            img,
+            {
+              yPercent: animationConfig.yOffsetFactor,
+              opacity: 0,
+              duration: animationConfig.duration,
+              ease: animationConfig.ease,
+            },
+            idx === oldIndex ? 0 : '<'
+          );
+        }
+      });
+
+      // Fade in the new image
+      tl.fromTo(
+        images[newIndex],
+        { yPercent: animationConfig.yOffsetFactor, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: animationConfig.duration, ease: animationConfig.ease },
+        '<'
+      );
+
+      currentAnimation = tl;
+    }
+
+    // Initialize the first image
+    gsap.set(images[0], { opacity: 1, yPercent: 0 });
+    images
+      .slice(1)
+      .forEach((img) => gsap.set(img, { opacity: 0, yPercent: animationConfig.yOffsetFactor }));
   });
 });
