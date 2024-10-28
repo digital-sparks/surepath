@@ -159,21 +159,10 @@ window.Webflow.push(() => {
     return split;
   }
 
-  /////
-
-  /////
-
-  /////
-
-  /////
-
   document.querySelectorAll('.logo-marquee_image').forEach((logo) => {
     logo.setAttribute('width', logo.dataset.width);
     logo.setAttribute('height', logo.dataset.height);
   });
-
-  /////
-  /////
 
   const nav = document.querySelector('.nav_component');
   const isDarkModeNav = nav.getAttribute('nav-state') === 'inverse';
@@ -214,4 +203,13 @@ window.Webflow.push(() => {
       });
     }
   }
+
+  document.querySelectorAll('.nav_dropdown').forEach((dropdown) => {
+    dropdown.addEventListener('mouseenter', () => {
+      gsap.to('.nav_background', { opacity: 0.15, duration: 0.3 });
+    });
+    dropdown.addEventListener('mouseleave', () => {
+      gsap.to('.nav_background', { opacity: 0, duration: 0.3 });
+    });
+  });
 });

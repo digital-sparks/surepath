@@ -5,8 +5,9 @@ import { ScrollTrigger } from 'gsap/all';
 gsap.registerPlugin(ScrollTrigger);
 
 window.Webflow ||= [];
-Webflow.push(function () {
-  const slidesLength = document.querySelectorAll('.solution-swiper_item').length;
+Webflow.push(() => {
+  let swiperInteracted = false;
+  let swiperFirstInteracted = false;
 
   const solutionsSwiper = new Swiper('.solution-swiper_wrapper', {
     modules: [Parallax, Keyboard, Mousewheel, Autoplay],
@@ -19,14 +20,14 @@ Webflow.push(function () {
     loop: true,
     speed: 550,
     parallax: true,
-    // initialSlide: slidesLength - 1,
     keyboard: {
       enabled: true,
       onlyInViewport: true,
     },
     autoplay: {
-      delay: 3500,
-      pauseOnMouseEnter: true,
+      enabled: false,
+      delay: 4000,
+      pauseOnMouseEnter: false,
       disableOnInteraction: true,
     },
     breakpoints: {
@@ -44,36 +45,58 @@ Webflow.push(function () {
       beforeInit: (swiper) => {
         swiper.wrapperEl.style.gridColumnGap = 'unset';
       },
+      sliderMove: () => {
+        swiperInteracted = true;
+      },
+      sliderFirstMove: () => {
+        swiperFirstInteracted = true;
+      },
       afterInit: (swiper) => {
-        swiper.autoplay.stop();
+        const handleMouseEnter = () => swiper.autoplay.stop();
+        const handleMouseLeave = () => {
+          if (!swiperInteracted) swiper.autoplay.start();
+        };
+
+        swiper.wrapperEl.addEventListener('mouseenter', handleMouseEnter);
+        swiper.wrapperEl.addEventListener('mouseleave', handleMouseLeave);
 
         ScrollTrigger.create({
           trigger: swiper.el,
           start: '75% bottom',
-          once: true,
+          end: '125% top',
           // markers: true,
+          onLeaveBack: () => {
+            swiperInteracted = false;
+            swiper.autoplay.start();
+          },
+          onLeave: () => {
+            swiperInteracted = false;
+          },
           onEnter: () => {
-            setTimeout(() => {
+            if (!swiperFirstInteracted) {
               swiper.slideNext();
               swiper.autoplay.start();
-            }, 205);
+            }
+          },
+          onEnterBack: () => {
+            swiperInteracted = false;
+            swiper.autoplay.start();
           },
         });
       },
       slideChange: (swiper) => {
-        document.querySelectorAll('.solution-swiper_component .links_link').forEach((link) => {
-          link.classList.remove('is-active');
-        });
-
-        document
-          .querySelectorAll('.solution-swiper_component .links_link')
-          [swiper.realIndex].classList.add('is-active');
+        const links = document.querySelectorAll('.solution-swiper_component .links_link');
+        links.forEach((link) => link.classList.remove('is-active'));
+        links[swiper.realIndex].classList.add('is-active');
       },
     },
   });
 
-  document.querySelectorAll('.solution-swiper_component .links_link').forEach((link, index) => {
+  const links = document.querySelectorAll('.solution-swiper_component .links_link');
+  links.forEach((link, index) => {
     link.addEventListener('click', () => {
+      swiperFirstInteracted = true;
+      swiperInteracted = true;
       solutionsSwiper.slideToLoop(index);
     });
   });
