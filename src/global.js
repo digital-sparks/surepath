@@ -14,6 +14,8 @@ window.Webflow.push(() => {
 
       const applyHighlighter = () => {
         headingSpans = quote.querySelectorAll('.heading-span');
+        gsap.set(headingSpans, { position: 'relative' });
+
         const lines = gsap.utils.toArray(headingSpans);
 
         gsap.defaults({ ease: 'power2.out', duration: 1.2 });
@@ -73,8 +75,8 @@ window.Webflow.push(() => {
 
       let text = nestedLinesSplit(quote, {
         type: 'lines',
-        reduceWhiteSpace: true,
-        lineThreshold: 1,
+        reduceWhiteSpace: false,
+        lineThreshold: 0.4,
       });
 
       applyHighlighter();
@@ -96,8 +98,8 @@ window.Webflow.push(() => {
           text.revert();
           text = nestedLinesSplit(quote, {
             type: 'lines',
-            reduceWhiteSpace: true,
-            lineThreshold: 1,
+            reduceWhiteSpace: false,
+            lineThreshold: 0.4,
           });
           gsap.set(quote.querySelectorAll('.heading-span'), {
             backgroundColor: 'white',
@@ -136,12 +138,6 @@ window.Webflow.push(() => {
     target = target[0];
     let contents = target.innerHTML;
     gsap.utils.toArray(target.children).forEach((child) => {
-      if (child.classList.contains('heading-span')) {
-        // Split the heading-span content into words
-        let words = child.textContent.split(/\s+/);
-        let newContent = words.map((word) => `<span class="heading-word">${word}</span>`).join(' ');
-        child.innerHTML = newContent;
-      }
       let split = new SplitText(child, { type: 'lines' });
       split.lines.forEach((line) => {
         let clone = child.cloneNode(false);
@@ -158,6 +154,42 @@ window.Webflow.push(() => {
     };
     return split;
   }
+
+  // function nestedLinesSplit(target, vars) {
+  //   target = gsap.utils.toArray(target);
+  //   if (target.length > 1) {
+  //     let splits = target.map((t) => nestedLinesSplit(t, vars)),
+  //       result = splits[0],
+  //       resultRevert = result.revert;
+  //     result.lines = splits.reduce((acc, cur) => acc.concat(cur.lines), []);
+  //     result.revert = () => splits.forEach((s) => (s === result ? resultRevert() : s.revert()));
+  //     return result;
+  //   }
+  //   target = target[0];
+  //   let contents = target.innerHTML;
+  //   gsap.utils.toArray(target.children).forEach((child) => {
+  //     if (child.classList.contains('heading-span')) {
+  //       // Split the heading-span content into words
+  //       let words = child.textContent.split(/\s+/);
+  //       let newContent = words.map((word) => `<span class="heading-word">${word}</span>`).join(' ');
+  //       child.innerHTML = newContent;
+  //     }
+  //     let split = new SplitText(child, { type: 'lines' });
+  //     split.lines.forEach((line) => {
+  //       let clone = child.cloneNode(false);
+  //       clone.innerHTML = line.innerHTML;
+  //       target.insertBefore(clone, child);
+  //     });
+  //     target.removeChild(child);
+  //   });
+  //   let split = new SplitText(target, vars),
+  //     originalRevert = split.revert;
+  //   split.revert = () => {
+  //     originalRevert.call(split);
+  //     target.innerHTML = contents;
+  //   };
+  //   return split;
+  // }
 
   document.querySelectorAll('.logo-marquee_image').forEach((logo) => {
     logo.setAttribute('width', logo.dataset.width);
