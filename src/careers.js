@@ -57,9 +57,22 @@ window.Webflow.push(() => {
     select.appendChild(opt);
   };
 
+  // const updateJobCountDisplay = (count, departmentCount, locationCount) => {
+  //   const pluralize = (count, singular, total) =>
+  //     `${count === total ? 'all' : count} ${singular}${count !== 1 ? 's' : ''}`;
+
+  //   const textString = `${count} role${count !== 1 ? 's' : ''} across <strong>${pluralize(
+  //     departmentCount,
+  //     'department',
+  //     departments.size
+  //   )}</strong> and <strong>${pluralize(locationCount, 'location', locations.size)}</strong>`;
+
+  //   document.querySelector(CONFIG.jobCountSelector).innerHTML = textString;
+  // };
+
   const updateJobCountDisplay = (count, departmentCount, locationCount) => {
     const pluralize = (count, singular, total) =>
-      `${count === total ? 'all' : count} ${singular}${count !== 1 ? 's' : ''}`;
+      `${count === total ? 'all' : count} ${singular}${count !== 1 || count === total ? 's' : ''}`;
 
     const textString = `${count} role${count !== 1 ? 's' : ''} across <strong>${pluralize(
       departmentCount,
